@@ -4,7 +4,6 @@ git init
 uv init --no-workspace
 uv venv
 
-
 # 2. Development, Quality & Testing
 uv add --dev `
   ruff `
@@ -25,4 +24,18 @@ uv add --dev `
 uv add `
   anthropic `
   guidance
+
+# 1. Add Spec Validation, Structuring & Schema Engines
+uv add `
+  pydantic `
+  pydantic-settings `
+  jinja2 `
+  yaml
+
+# 2. Add ADR / Spec Tooling (CLI, Diagramming & Docs)
+uv add --dev `
+  mkdocs-kroki-plugin `
+  mkdocs-gen-files `
+  mkdocstrings[python] `
+  adr-tools-python
 
