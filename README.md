@@ -18,7 +18,15 @@ uv add --dev `
   pre-commit `
   towncrier `
   mkdocs `
-  mkdocs-material
+  mkdocs-material`
+  pytest-watch
+
+# Core Runtime Dependencies: Data validation & API framework
+uv add pydantic pydantic-settings fastapi uvicorn
+
+# Development Dependencies: Schema generators, contract testing, and quality tools
+uv add --dev datamodel-code-generator schemathesis hypothesis pytest pytest-cov ruff mypy
+
 
 # 6. LLMs, RAG & LLM Tooling
 uv add `
