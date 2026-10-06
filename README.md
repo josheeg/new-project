@@ -33,6 +33,12 @@ uv add fastapi pydantic uvicorn
 # Development Dependencies for Documentation Generation, Testing, and Linting
 uv add --dev mkdocs mkdocs-material "mkdocstrings[python]" interrogate pytest ruff mypy
 
+# Core Dependencies for Spec-First API Routing & Runtime Validation
+uv add connexion[flask] pydantic uvicorn fastapi
+
+# Development Dependencies for Spec Linting, Code Generation, Mocking, and Contract Testing
+uv add --dev openapi-spec-validator openapi-python-client schemathesis pytest pytest-cov ruff mypy
+
 
 # 6. LLMs, RAG & LLM Tooling
 uv add `
