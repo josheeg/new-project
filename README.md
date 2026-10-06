@@ -30,7 +30,7 @@ uv add `
   pydantic `
   pydantic-settings `
   jinja2 `
-  yaml
+  pyyaml
 
 # 2. Add ADR / Spec Tooling (CLI, Diagramming & Docs)
 uv add --dev `
