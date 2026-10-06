@@ -27,6 +27,12 @@ uv add pydantic pydantic-settings fastapi uvicorn
 # Development Dependencies: Schema generators, contract testing, and quality tools
 uv add --dev datamodel-code-generator schemathesis hypothesis pytest pytest-cov ruff mypy
 
+# Core Dependencies for API & Interactive Docs (if building APIs)
+uv add fastapi pydantic uvicorn
+
+# Development Dependencies for Documentation Generation, Testing, and Linting
+uv add --dev mkdocs mkdocs-material "mkdocstrings[python]" interrogate pytest ruff mypy
+
 
 # 6. LLMs, RAG & LLM Tooling
 uv add `
