@@ -39,6 +39,12 @@ uv add connexion[flask] pydantic uvicorn fastapi
 # Development Dependencies for Spec Linting, Code Generation, Mocking, and Contract Testing
 uv add --dev openapi-spec-validator openapi-python-client schemathesis pytest pytest-cov ruff mypy
 
+# Core Runtime Dependencies: Dependency Injection, Configuration, and Domain Modeling
+uv add dependency-injector pydantic pydantic-settings
+
+# Development Dependencies: Architectural Governance, Diagramming, Performance Benchmarking, and Quality Enforcement
+uv add --dev import-linter diagrams pytest pytest-benchmark ruff mypy
+
 
 # 6. LLMs, RAG & LLM Tooling
 uv add `
