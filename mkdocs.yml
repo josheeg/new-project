@@ -1,0 +1,49 @@
+site_name: driven-dev
+site_description: Schema-driven development scaffold
+docs_dir: docs
+
+# strict is on: any broken link or page missing from nav fails the build
+# (check scripts run `mkdocs build` and rely on this).
+strict: true
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: false
+            docstring_style: sphinx
+
+nav:
+  - Home: index.md
+  - Architecture: architecture.md
+  - API Reference: api.md
+  - Specifications:
+      - Template: specs/TEMPLATE.md
+      - "1. Service health endpoint": specs/0001-service-health.md
+  - Decision Records:
+      - "1. Record architecture decisions": adr/0001-record-architecture-decisions.md
+      - "2. Spec-first API via connexion": adr/0002-Use-connexion-for-a-spec-first-API.md
+      - "3. pytest config in pytest.ini": adr/0003-Keep-pytest-config-in-pytest.ini.md
+      - "4. Local verification instead of hosted CI": adr/0004-Use-local-verification-instead-of-hosted-CI.md
+      - "5. Enforce architecture with import-linter": adr/0005-Enforce-module-architecture-with-import-linter.md

@@ -1,77 +1,31 @@
-# new-project-ai
-# 1. Initialize Repository & Environment
-git init
-uv init --no-workspace
-uv venv
+# driven-dev
 
-# 2. Development, Quality & Testing
-uv add --dev `
-  ruff `
-  mypy `
-  pytest `
-  pytest-cov `
-  pytest-asyncio `
-  pytest-mock `
-  pytest-xdist `
-  coverage `
-  pyinstaller `
-  pre-commit `
-  towncrier `
-  mkdocs `
-  mkdocs-material`
-  pytest-watch
+Schema-driven development scaffold: the OpenAPI spec (`openapi/openapi.yaml`)
+is the source of truth for generated models, the running API, contract tests,
+and a typed client — wrapped in strict lint/type/test/docs gates.
 
-# Core Runtime Dependencies: Data validation & API framework
-uv add pydantic pydantic-settings fastapi uvicorn
+## Quickstart
 
-# Development Dependencies: Schema generators, contract testing, and quality tools
-uv add --dev datamodel-code-generator schemathesis hypothesis pytest pytest-cov ruff mypy
+```bash
+uv sync                          # install deps + dev group
+uv run python -m driven_dev.api  # serve the API on :8080
+.\check.ps1                      # full verify chain (./check.sh on unix)
+uv run mkdocs serve              # docs at http://127.0.0.1:8000
+.\clientgen.ps1                  # typed client -> clients/ (gitignored)
+```
 
-# Core Dependencies for API & Interactive Docs (if building APIs)
-uv add fastapi pydantic uvicorn
+Requires [uv](https://docs.astral.sh/uv/) and Python 3.14 (managed by uv).
 
-# Development Dependencies for Documentation Generation, Testing, and Linting
-uv add --dev mkdocs mkdocs-material "mkdocstrings[python]" interrogate pytest ruff mypy
+## Layout
 
-# Core Dependencies for Spec-First API Routing & Runtime Validation
-uv add connexion[flask] pydantic uvicorn fastapi
+- `src/driven_dev/` — package: `api` (connexion app), `models` (domain),
+  `api_models` (generated), `settings`, CLI entrypoint
+- `openapi/openapi.yaml` — the contract; change this first
+- `tests/` — unit, integration, property (hypothesis), and contract
+  (schemathesis) tests
+- `docs/` — MkDocs site including [ADR decision records](docs/adr/)
 
-# Development Dependencies for Spec Linting, Code Generation, Mocking, and Contract Testing
-uv add --dev openapi-spec-validator openapi-python-client schemathesis pytest pytest-cov ruff mypy
+## Docs & instructions
 
-# Core Runtime Dependencies: Dependency Injection, Configuration, and Domain Modeling
-uv add dependency-injector pydantic pydantic-settings
-
-# Development Dependencies: Architectural Governance, Diagramming, Performance Benchmarking, and Quality Enforcement
-uv add --dev import-linter diagrams pytest pytest-benchmark ruff mypy
-
-
-# 6. LLMs, RAG & LLM Tooling
-uv add `
-  anthropic `
-  guidance
-
-# 1. Add Spec Validation, Structuring & Schema Engines
-uv add `
-  pydantic `
-  pydantic-settings `
-  jinja2 `
-  pyyaml
-
-# 2. Add ADR / Spec Tooling (CLI, Diagramming & Docs)
-uv add --dev `
-  mkdocs-kroki-plugin `
-  mkdocs-gen-files `
-  mkdocstrings[python] `
-  adr-tools-python
-
-uv add pyinstaller
-
-uv tool install specify-cli
-
-specify init .
-
-npx skills add bmad-code-org/BMAD-METHOD
-
-bmad setup
-
+- `uv run mkdocs serve` — full documentation with API reference
+- `AGENTS.md` — commands, TDD workflow, and repository gotchas

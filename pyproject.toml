@@ -1,25 +1,172 @@
-[[tool.uv.index]]
-name = "pytorch-cpu"
-url = "https://download.pytorch.org/whl/cpu"
-explicit = true
-[tool.uv.sources]
-torch = { index = "pytorch-cpu" }
-torchvision = { index = "pytorch-cpu" }
-torchaudio = { index = "pytorch-cpu" }
+[project]
+name = "driven-dev"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "josheeg", email = "josheeg@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "anthropic>=1.11.0",
+    "connexion[flask]>=3.3.0",
+    "dependency-injector>=4.49.1",
+    "fastapi>=0.142.2",
+    "guidance>=0.3.1",
+    "jinja2>=3.1.6",
+    "pydantic>=2.13.5",
+    "pydantic-settings>=2.15.0",
+    "pyyaml>=6.0.3",
+    "uvicorn>=0.54.0",
+]
+
+[project.scripts]
+driven-dev = "driven_dev:main"
+
+[build-system]
+requires = ["uv_build>=0.12.12,<0.13.0"]
+build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "adr-tools-python>=1.0.3",
     "coverage>=7.16.2",
+    "datamodel-code-generator>=0.83.0",
+    "diagrams>=0.25.1",
+    "hypothesis>=6.168.5",
+    "import-linter>=2.15",
+    "interrogate>=1.7.0",
     "mkdocs>=1.6.1",
+    "mkdocs-gen-files>=0.6.1",
+    "mkdocs-kroki-plugin>=1.7.0",
     "mkdocs-material>=9.7.7",
+    "mkdocstrings[python]>=1.0.6",
     "mypy>=2.4.0",
+    "openapi-python-client>=0.29.1",
+    "openapi-spec-validator>=0.9.0",
     "pre-commit>=4.6.2",
     "pyinstaller>=6.22.3",
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
+    "pytest-bdd>=9.0.0",
+    "pytest-benchmark>=5.3.0",
     "pytest-cov>=7.1.0",
     "pytest-mock>=3.16.0",
+    "pytest-watch>=4.2.0",
     "pytest-xdist>=3.8.0",
     "ruff>=0.16.10",
+    "schemathesis>=4.29.4",
     "towncrier>=26.9.0",
 ]
+
+# --- Lint (ruff) -------------------------------------------------------------
+[tool.ruff]
+line-length = 88
+target-version = "py314"
+# Third-party skill/tool trees are not ours to lint. force-exclude also makes
+# the exclusions stick when pre-commit passes staged paths explicitly.
+force-exclude = true
+extend-exclude = [
+    ".agents",    # BMad project skills (canonical copies)
+    "_bmad",      # BMad installation scripts
+    ".claude",    # junction adapters -> .agents/skills (gitignored)
+    ".continue",
+    ".goose",
+    ".kilo",
+    ".openhands",
+    ".roo",
+    ".specify",   # spec-kit integration
+]
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "B",    # flake8-bugbear
+    "C4",   # comprehension rules
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # import sorting
+    "PIE",  # misc lint
+    "PTH",  # prefer pathlib over os.path
+    "RUF",  # ruff-specific
+    "SIM",  # simplify
+    "UP",   # pyupgrade
+    "W",    # pycodestyle warnings
+]
+ignore = [
+    "B008",  # call in default arg — idiomatic for FastAPI Depends()
+]
+
+# --- Typecheck (mypy) --------------------------------------------------------
+[tool.mypy]
+python_version = "3.14"
+files = ["src", "tests"]
+strict = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+# connexion 3.3 ships no py.typed / stubs
+module = ["connexion", "connexion.*"]
+ignore_missing_imports = true
+
+[tool.pydantic-mypy]
+init_typed = true         # __init__ kwargs are type-checked
+init_forbid_extra = true  # no unknown kwargs
+
+# --- Docstrings (interrogate) ---------------------------------------------
+[tool.interrogate]
+fail-under = 100
+exclude = ["*/api_models.py"]  # generated: no docstrings by design
+ignore-init-method = true
+ignore-magic = true
+
+# --- Changelog (towncrier) ------------------------------------------------
+[tool.towncrier]
+package = "driven_dev"
+directory = "newsfragments"
+filename = "CHANGELOG.md"
+
+# --- Architecture (import-linter) -----------------------------------------
+# Three contracts. Notes:
+#   - the root package cannot join a layers contract (it is the parent of
+#     every other entry — import-linter rejects "shared descendants");
+#   - forbidden pairs whose source lives inside the forbidden package are
+#     skipped under the default as_packages = true, so the "no one imports
+#     the composition root" contract pins the root as an exact module
+#     (as_packages = false) instead of as a package subtree.
+# The root (driven_dev) is the composition layer: it may import anything.
+[tool.importlinter]
+root_packages = ["driven_dev"]
+
+[[tool.importlinter.contracts]]
+name = "Domain, configuration, and generated DTOs are independent"
+type = "independence"
+modules = [
+    "driven_dev.models",
+    "driven_dev.settings",
+    "driven_dev.api_models",
+]
+
+[[tool.importlinter.contracts]]
+name = "Leaves never import the delivery layer"
+type = "forbidden"
+source_modules = [
+    "driven_dev.models",
+    "driven_dev.settings",
+    "driven_dev.api_models",
+]
+forbidden_modules = ["driven_dev.api"]
+
+[[tool.importlinter.contracts]]
+name = "No module imports the composition root"
+type = "forbidden"
+source_modules = [
+    "driven_dev.api",
+    "driven_dev.models",
+    "driven_dev.settings",
+    "driven_dev.api_models",
+]
+forbidden_modules = ["driven_dev"]
+as_packages = false
+
+# --- Tests: pytest config lives in pytest.ini (ptw cannot parse TOML) --------
