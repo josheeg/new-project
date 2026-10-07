@@ -65,3 +65,13 @@ uv add --dev `
   mkdocstrings[python] `
   adr-tools-python
 
+uv add pyinstaller
+
+uv tool install specify-cli
+
+specify init .
+
+npx skills add bmad-code-org/BMAD-METHOD
+
+bmad setup
+
